@@ -4,7 +4,7 @@
 
 在 Pixel 10a(Android 17)上开发和使用。
 
-<img src="docs/screenshot.png" alt="PWR//MON 运行截图" width="320">
+<img src="docs/demo.gif" alt="PWR//MON 运行动图" width="320">
 
 ## 显示内容
 
