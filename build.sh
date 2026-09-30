@@ -15,7 +15,7 @@ mkdir -p "$OUT/classes" "$OUT/dex"
 
 "$BT/aapt2" compile --dir res -o "$OUT/res.zip"
 "$BT/aapt2" link -o "$OUT/unsigned.apk" -I "$JAR" --manifest AndroidManifest.xml \
-    --version-code 1 --version-name 1.0 "$OUT/res.zip"
+    --version-code 1 --version-name 0.1 "$OUT/res.zip"
 
 javac -source 17 -target 17 -Xlint:-options -XDstringConcat=inline \
     -classpath "$JAR" -d "$OUT/classes" $(find src -name '*.java')

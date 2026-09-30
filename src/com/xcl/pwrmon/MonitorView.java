@@ -365,14 +365,22 @@ public class MonitorView extends View {
         for (float yy = step / 2; yy < h; yy += step) c.drawLine(0, yy, w, yy, pS);
     }
 
+    /** Draws the title in two runs so the monospace slashes sit tight together. */
+    private void title(Canvas c, float x, float base, int color, int glow) {
+        float size = 27 * u;
+        txt(c, "PWR/", x, base, size, color, mono, Paint.Align.LEFT, glow);
+        float overlap = pT.measureText("/") * 0.42f;
+        txt(c, "/MON", x + pT.measureText("PWR/") - overlap, base, size, color, mono, Paint.Align.LEFT, glow);
+    }
+
     private void drawHeader(Canvas c, float x0, float y, float x1, float t) {
         float base = y + 26 * u;
         // chromatic split, exaggerated for a moment every few seconds
         float phase = t % 5f;
         float split = phase < 0.12f ? 4 * u : (phase > 2.5f && phase < 2.56f ? -3 * u : 0.8f * u);
-        txt(c, "PWR//MON", x0 - split, base, 27 * u, alpha(MAGENTA, 0xB0), mono, Paint.Align.LEFT, 0);
-        txt(c, "PWR//MON", x0 + split, base, 27 * u, alpha(CYAN, 0xB0), mono, Paint.Align.LEFT, 0);
-        txt(c, "PWR//MON", x0, base, 27 * u, TEXT, mono, Paint.Align.LEFT, CYAN);
+        title(c, x0 - split, base, alpha(MAGENTA, 0xB0), 0);
+        title(c, x0 + split, base, alpha(CYAN, 0xB0), 0);
+        title(c, x0, base, TEXT, CYAN);
         String dev = Build.MODEL.toUpperCase(Locale.US) + " // ANDROID " + Build.VERSION.RELEASE;
         txt(c, dev, x0 + 1 * u, base + 16 * u, 9.5f * u, DIM, label, Paint.Align.LEFT, 0);
 
@@ -588,8 +596,10 @@ public class MonitorView extends View {
         }
         if (histN < 2) return;
 
-        float dx = (gx1 - gx0) / (HIST - 1);
-        float sx = gx1 - (histN - 1) * dx;
+        // grow from the left and compress until the window is full
+        float dx = (gx1 - gx0) / (Math.max(histN, 30) - 1);
+        float sx = gx0;
+        float ex = sx + (histN - 1) * dx;
         path.rewind();
         for (int k = 0; k < histN; k++) {
             float px = sx + k * dx;
@@ -600,7 +610,7 @@ public class MonitorView extends View {
         float lastY = gy1 - (hist[histN - 1] - lo) / span * (gy1 - gy0);
 
         Path fill = new Path(path);
-        fill.lineTo(gx1, zeroY);
+        fill.lineTo(ex, zeroY);
         fill.lineTo(sx, zeroY);
         fill.close();
         pF.clearShadowLayer();
@@ -618,7 +628,7 @@ public class MonitorView extends View {
 
         pF.setColor(0xFFFFFFFF);
         pF.setShadowLayer(8 * u, 0, 0, accent);
-        c.drawCircle(gx1, lastY, 3.5f * u, pF);
+        c.drawCircle(ex, lastY, 3.5f * u, pF);
         pF.clearShadowLayer();
     }
 
