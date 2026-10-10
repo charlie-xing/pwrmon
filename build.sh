@@ -4,7 +4,12 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-SDK="${ANDROID_SDK_ROOT:-$HOME/Library/Android/sdk}"
+if [ -z "${ANDROID_SDK_ROOT:-}" ]; then
+    ANDROID_SDK_ROOT="$HOME/Library/Android/sdk"
+    [ -d "$ANDROID_SDK_ROOT" ] || ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+fi
+SDK="$ANDROID_SDK_ROOT"
+[ -n "${JAVA_HOME:-}" ] && export PATH="$JAVA_HOME/bin:$PATH"
 BT="$SDK/build-tools/36.0.0"
 JAR="$SDK/platforms/android-36/android.jar"
 PKG=com.xcl.pwrmon
@@ -15,7 +20,7 @@ mkdir -p "$OUT/classes" "$OUT/dex"
 
 "$BT/aapt2" compile --dir res -o "$OUT/res.zip"
 "$BT/aapt2" link -o "$OUT/unsigned.apk" -I "$JAR" --manifest AndroidManifest.xml \
-    --version-code 1 --version-name 0.1 "$OUT/res.zip"
+    --version-code 2 --version-name 0.2 -A assets "$OUT/res.zip"
 
 javac -source 17 -target 17 -Xlint:-options -XDstringConcat=inline \
     -classpath "$JAR" -d "$OUT/classes" $(find src -name '*.java')

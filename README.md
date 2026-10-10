@@ -17,6 +17,15 @@
 
 主色随状态变化:充电青色、放电品红、低电量红色、充满绿色。App 在前台时保持屏幕常亮。
 
+## 主题
+
+两套界面,可随时切换,选择会被记住:
+
+- **Cyberpunk**:默认的霓虹 / CRT 风格。点时钟左边的 **THEME** 按钮换主题
+- **Omarchy**:模仿 [Omarchy](https://omarchy.org) 桌面 —— 顶部 Waybar,下面是 Hyprland 平铺的终端窗口,里面是 btop 风格的面板和 fastfetch。点左上角 Arch 图标换主题,点窗口可切换焦点边框。配色取自 Omarchy 自带主题:Tokyo Night、Catppuccin、Gruvbox、Nord、Everforest、Kanagawa、Matte Black、Osaka Jade、Ristretto、Rosé Pine、Catppuccin Latte
+
+Omarchy 界面使用 JetBrainsMono Nerd Font(只保留用到的字符,OFL 许可证见 `assets/fonts/OFL.txt`)。
+
 ## 数据来源与限制
 
 只用公开的系统接口(`BatteryManager` 和 `ACTION_BATTERY_CHANGED` 广播),不需要任何权限,也不需要 root。因此:
@@ -27,7 +36,7 @@
 
 ## 构建与安装
 
-需要 JDK 17 或更高版本,以及 Android SDK 的 `build-tools;36.0.0` 和 `platforms;android-36`。SDK 路径取自 `ANDROID_SDK_ROOT`,默认 `~/Library/Android/sdk`。
+需要 JDK 17 或更高版本,以及 Android SDK 的 `build-tools;36.0.0` 和 `platforms;android-36`。SDK 路径取自 `ANDROID_SDK_ROOT`,默认 `~/Library/Android/sdk`(macOS),不存在时用 `~/Android/Sdk`(Linux)。设置了 `JAVA_HOME` 时优先使用其中的 JDK。
 
 ```sh
 ./build.sh            # 生成 build/pwrmon.apk
@@ -43,8 +52,13 @@
 ```
 AndroidManifest.xml
 build.sh
+assets/fonts/                     JetBrainsMono Nerd Font 子集
 res/                              图标和主题
 src/com/xcl/pwrmon/
   MainActivity.java               窗口设置、启停采样
-  MonitorView.java                采样与全部绘制
+  MonitorView.java                定时采样、刷新、触摸、主题选择
+  Battery.java                    电池数据采样与格式化
+  Skin.java                       界面基类
+  CyberSkin.java                  赛博朋克界面
+  OmarchySkin.java                Omarchy 界面与配色
 ```

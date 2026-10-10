@@ -25,6 +25,13 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
+    public void onBackPressed() {
+        // API 33+ routes back through the view's OnBackInvokedCallback instead
+        if (!view.closePicker()) super.onBackPressed();
+    }
+
+    @Override
     protected void onPause() {
         view.stop();
         super.onPause();
